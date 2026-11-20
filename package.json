@@ -14,13 +14,15 @@
     "dist:win": "vite build && electron-builder --win portable"
   },
   "devDependencies": {
-    "electron": "^33.0.0",
-    "electron-builder": "^25.0.0",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8",
     "vite": "^8.3.0"
   },
   "build": {
     "appId": "com.verci.lyrics",
     "productName": "Verci",
+    "electronDist": ".electron-dist",
+    "electronVersion": "45.3.0",
     "directories": {
       "output": "release"
     },
@@ -33,7 +35,8 @@
       "target": [
         "portable"
       ],
-      "artifactName": "Verci-${version}.exe"
+      "artifactName": "Verci-${version}.exe",
+      "signAndEditExecutable": false
     }
   }
 }

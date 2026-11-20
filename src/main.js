@@ -2,6 +2,93 @@ import './style.css'
 import mapA from './assets/map-3d-a.jpg'
 import mapB from './assets/map-3d-b.jpg'
 
+/* ---------------- languages ---------------- */
+
+const I18N = {
+  en: {
+    size: 'Size', font: 'Font', lock: 'Lock Screen', aesthetics: 'Aesthetics', listen: 'Listen',
+    waitingTitle: 'Waiting for playback',
+    waitingHint: 'Open Spotify or Apple Music and press play — Spotify Connect works too.',
+    listeningTitle: 'Listening…', listeningHint: 'Waiting for the first track…',
+    nothingTitle: 'Nothing playing', nothingHint: 'Open Spotify or Apple Music and press play.',
+    noLyricsTitle: 'No lyrics for “{track}”',
+    noLyricsHint: 'Neither LRCLIB nor lyrics.ovh has a match. Try another track.',
+    checkAgain: 'Check again',
+  },
+  hi: {
+    size: 'आकार', font: 'फ़ॉन्ट', lock: 'लॉक स्क्रीन', aesthetics: 'सौंदर्य', listen: 'सुनें',
+    waitingTitle: 'प्लेबैक का इंतज़ार',
+    waitingHint: 'Spotify या Apple Music खोलें और चलाएँ — Spotify Connect भी काम करता है।',
+    listeningTitle: 'सुन रहे हैं…', listeningHint: 'पहले ट्रैक का इंतज़ार…',
+    nothingTitle: 'कुछ नहीं चल रहा', nothingHint: 'Spotify या Apple Music खोलें और चलाएँ।',
+    noLyricsTitle: '“{track}” के बोल नहीं मिले',
+    noLyricsHint: 'LRCLIB और lyrics.ovh पर कोई मैच नहीं। दूसरा ट्रैक आज़माएँ।',
+    checkAgain: 'फिर देखें',
+  },
+  es: {
+    size: 'Tamaño', font: 'Fuente', lock: 'Bloqueo', aesthetics: 'Estética', listen: 'Escuchar',
+    waitingTitle: 'Esperando reproducción',
+    waitingHint: 'Abre Spotify o Apple Music y pulsa play — Spotify Connect también funciona.',
+    listeningTitle: 'Escuchando…', listeningHint: 'Esperando la primera canción…',
+    nothingTitle: 'Nada sonando', nothingHint: 'Abre Spotify o Apple Music y pulsa play.',
+    noLyricsTitle: 'Sin letra para “{track}”',
+    noLyricsHint: 'Ni LRCLIB ni lyrics.ovh tienen coincidencia. Prueba otra canción.',
+    checkAgain: 'Comprobar',
+  },
+  fr: {
+    size: 'Taille', font: 'Police', lock: 'Verrouillage', aesthetics: 'Esthétique', listen: 'Écouter',
+    waitingTitle: 'En attente de lecture',
+    waitingHint: 'Ouvrez Spotify ou Apple Music et lancez la lecture — Spotify Connect fonctionne aussi.',
+    listeningTitle: 'À l’écoute…', listeningHint: 'En attente du premier morceau…',
+    nothingTitle: 'Rien en lecture', nothingHint: 'Ouvrez Spotify ou Apple Music et lancez la lecture.',
+    noLyricsTitle: 'Pas de paroles pour « {track} »',
+    noLyricsHint: 'Ni LRCLIB ni lyrics.ovh n’ont de résultat. Essayez un autre morceau.',
+    checkAgain: 'Vérifier',
+  },
+  de: {
+    size: 'Größe', font: 'Schrift', lock: 'Sperrbildschirm', aesthetics: 'Ästhetik', listen: 'Anhören',
+    waitingTitle: 'Warte auf Wiedergabe',
+    waitingHint: 'Spotify oder Apple Music öffnen und abspielen — Spotify Connect funktioniert auch.',
+    listeningTitle: 'Höre zu…', listeningHint: 'Warte auf den ersten Titel…',
+    nothingTitle: 'Nichts läuft', nothingHint: 'Spotify oder Apple Music öffnen und abspielen.',
+    noLyricsTitle: 'Kein Text für „{track}“',
+    noLyricsHint: 'Weder LRCLIB noch lyrics.ovh haben einen Treffer. Anderen Titel versuchen.',
+    checkAgain: 'Erneut prüfen',
+  },
+  pt: {
+    size: 'Tamanho', font: 'Fonte', lock: 'Bloqueio', aesthetics: 'Estética', listen: 'Ouvir',
+    waitingTitle: 'Aguardando reprodução',
+    waitingHint: 'Abra o Spotify ou Apple Music e dê play — o Spotify Connect também funciona.',
+    listeningTitle: 'Ouvindo…', listeningHint: 'Aguardando a primeira faixa…',
+    nothingTitle: 'Nada tocando', nothingHint: 'Abra o Spotify ou Apple Music e dê play.',
+    noLyricsTitle: 'Sem letra para “{track}”',
+    noLyricsHint: 'Nem o LRCLIB nem o lyrics.ovh têm correspondência. Tente outra faixa.',
+    checkAgain: 'Verificar',
+  },
+  ja: {
+    size: 'サイズ', font: 'フォント', lock: 'ロック画面', aesthetics: '外観', listen: '聴く',
+    waitingTitle: '再生を待っています',
+    waitingHint: 'Spotify か Apple Music で再生してください — Spotify Connect でも動きます。',
+    listeningTitle: '聴き取り中…', listeningHint: '最初の曲を待っています…',
+    nothingTitle: '再生中ではありません', nothingHint: 'Spotify か Apple Music で再生してください。',
+    noLyricsTitle: '「{track}」の歌詞がありません',
+    noLyricsHint: 'LRCLIB にも lyrics.ovh にも一致がありません。別の曲をお試しください。',
+    checkAgain: '再確認',
+  },
+  ar: {
+    size: 'الحجم', font: 'الخط', lock: 'شاشة القفل', aesthetics: 'المظهر', listen: 'استماع',
+    waitingTitle: 'بانتظار التشغيل',
+    waitingHint: 'افتح Spotify أو Apple Music واضغط تشغيل — يعمل Spotify Connect أيضًا.',
+    listeningTitle: 'جارٍ الاستماع…', listeningHint: 'بانتظار أول مقطع…',
+    nothingTitle: 'لا شيء يعمل', nothingHint: 'افتح Spotify أو Apple Music واضغط تشغيل.',
+    noLyricsTitle: 'لا كلمات لـ «{track}»',
+    noLyricsHint: 'لا يوجد تطابق في LRCLIB أو lyrics.ovh. جرّب مقطعًا آخر.',
+    checkAgain: 'تحقق مرة أخرى',
+  },
+}
+
+const t = (key) => I18N[state.lang]?.[key] ?? I18N.en[key] ?? key
+
 /* ---------------- word symbols (the Visual map) ---------------- */
 
 const SYMBOLS = {
@@ -104,6 +191,18 @@ const EMOJI = {
   early: '🌅', late: '🌙', citylights: '🌃',
 }
 
+const EMOJI_I18N = {
+  'प्यार': '❤️', 'दिल': '❤️', 'रात': '🌙', 'शहर': '🌃', 'रोशनी': '✨', 'आग': '🔥', 'सपना': '💭',
+  amor: '❤️', corazón: '❤️', noche: '🌙', ciudad: '🌃', luz: '✨', fuego: '🔥', sueño: '💭',
+  amour: '❤️', cœur: '❤️', nuit: '🌙', ville: '🌃', lumière: '✨', feu: '🔥', rêve: '💭',
+  liebe: '❤️', herz: '❤️', nacht: '🌙', stadt: '🌃', licht: '✨', feuer: '🔥', traum: '💭',
+  noite: '🌙', cidade: '🌃', luz: '✨', fogo: '🔥', sonho: '💭',
+  '愛': '❤️', '夜': '🌙', '街': '🌃', '光': '✨', '火': '🔥', '夢': '💭',
+  'حب': '❤️', 'ليل': '🌙', 'مدينة': '🌃', 'نور': '✨', 'نار': '🔥', 'حلم': '💭',
+}
+
+const cleanWord = (text) => String(text).replace(/[.,!?…"'“”«»]/g, '').trim()
+
 const MOOD_RULES = [
   { emoji: '🥰', words: ['love', 'heart', 'kiss', 'hold', 'stay', 'together', 'hug', 'kind'] },
   { emoji: '🔥', words: ['fire', 'lights', 'glow', 'shine', 'storm', 'fast', 'flash'] },
@@ -117,69 +216,13 @@ const MOOD_RULES = [
 
 const TRACKS = [
   {
-    title: 'Namaste',
-    artist: 'Seedhe Maut',
-    album: 'Delhi Streets',
-    duration: 42,
-    art: 'linear-gradient(150deg, #ffd9a0, #e07a45 42%, #5a2a52 76%, #0b0714)',
-    palette: { c1: '#ffe6c9', c2: '#ff8a5c', c3: '#c9a99a' },
-    lines: [
-      { start: 0.6, words: ['pitampura', 'to', 'kashmere', 'gate'] },
-      { start: 5.4, words: ['kamla', 'nagar', 'in', 'the', 'rearview'] },
-      { start: 10.6, words: ['majnu', 'ka', 'tila', 'after', 'midnight'] },
-      { start: 15.8, words: ['connaught', 'place,', 'no', 'signal'] },
-      { start: 21.0, words: ['hauz', 'khas', 'till', 'the', 'morning'] },
-      { start: 26.2, words: ['lajpat', 'nagar,', 'we', 'outside'] },
-      { start: 31.6, words: ['delhi', 'in', 'the', 'blood'] },
-    ],
-  },
-  {
-    title: 'Glass Hours',
-    artist: 'Nova Vale',
-    album: 'Night Bloom',
-    duration: 46,
-    art: 'linear-gradient(150deg, #ffc2dd, #b47bd6 44%, #232a5e 78%, #0b1020)',
-    palette: { c1: '#e7c9d1', c2: '#fb6e90', c3: '#9b9ba3' },
-    lines: [
-      { start: 0.6, words: ['city', 'lights', 'are', 'waking', 'up'] },
-      { start: 5.2, words: ['and', 'the', 'window', 'holds', 'the', 'glow'] },
-      { start: 10.6, words: ['we', 'were', 'never', 'in', 'a', 'hurry'] },
-      { start: 15.8, words: ['let', 'the', 'quiet', 'take', 'it', 'slow'] },
-      { start: 21.2, words: ['hold', 'on', 'to', 'the', 'afterglow'] },
-      { start: 26.6, words: ['hold', 'on,', "don't", 'let', 'it', 'go'] },
-    ],
-  },
-  {
-    title: 'Paper Moons',
-    artist: 'Lila June',
-    album: 'Soft Focus',
-    duration: 38,
-    art: 'linear-gradient(150deg, #ffe4c2, #f0a27d 46%, #7c4359 80%, #1b1220)',
-    palette: { c1: '#f6ddc8', c2: '#ffb877', c3: '#b9a4a0' },
-    lines: [
-      { start: 0.5, words: ['paper', 'moons', 'above', 'the', 'harbor'] },
-      { start: 5.6, words: ['folded', 'softly', 'out', 'of', 'sight'] },
-      { start: 10.8, words: ['we', 'can', 'make', 'a', 'little', 'weather'] },
-      { start: 16.2, words: ['keep', 'the', 'windows', 'open', 'wide'] },
-      { start: 21.6, words: ['nothing', 'here', 'needs', 'explaining'] },
-      { start: 26.6, words: ['stay', 'until', 'the', 'morning', 'light'] },
-    ],
-  },
-  {
-    title: 'Blue Hour',
-    artist: 'Sable Court',
-    album: 'Coastline',
-    duration: 44,
-    art: 'linear-gradient(150deg, #b6f0f6, #5f9fd6 46%, #25315e 80%, #080d1a)',
-    palette: { c1: '#dcecf6', c2: '#7fd4e8', c3: '#8f9cb3' },
-    lines: [
-      { start: 0.6, words: ['blue', 'hour', 'on', 'the', 'water'] },
-      { start: 5.4, words: ['every', 'wave', 'a', 'slow', 'refrain'] },
-      { start: 10.6, words: ['you', 'were', 'humming', 'something', 'older'] },
-      { start: 16.0, words: ['i', 'was', 'learning', 'how', 'to', 'stay'] },
-      { start: 21.6, words: ['let', 'the', 'tide', 'decide', 'the', 'tempo'] },
-      { start: 27.2, words: ['we', 'can', 'take', 'the', 'long', 'way', 'home'] },
-    ],
+    title: 'Waiting for playback',
+    artist: 'Spotify · Apple Music',
+    album: '',
+    duration: 240,
+    art: 'linear-gradient(150deg, #2a2330, #12101a 60%, #07070b)',
+    palette: { c1: '#f4f4f5', c2: '#fb6e90', c3: '#9b9ba3' },
+    lines: [],
   },
 ]
 
@@ -272,6 +315,8 @@ const state = {
   audioName: null,
   external: false,
   duration: 0,
+  lang: 'en',
+  live: { mode: 'waiting', track: '' },
 }
 
 /* ---------------- dom ---------------- */
@@ -318,6 +363,7 @@ const fsFill = $('fsFill')
 const fsPlay = $('fsPlay')
 const toastEl = $('toast')
 const audioFile = $('audioFile')
+const uiLang = $('uiLang')
 
 let timedLines = []
 let words = []
@@ -357,9 +403,25 @@ function prepareWords() {
   )
 }
 
+const RTL_RE = /[\u0590-\u08ff\u0700-\u074f\u0750-\u077f]/
+
+function splitWords(text) {
+  const value = String(text).trim()
+  if (!value) return []
+  if (!/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af\u0e00-\u0e7f]/.test(value)) {
+    return value.split(/\s+/).filter(Boolean)
+  }
+  try {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' })
+    return [...segmenter.segment(value)].map((part) => part.segment.trim()).filter(Boolean)
+  } catch {
+    return value.split(/(?=[\u3040-\u30ff\u3400-\u9fff])/).filter(Boolean)
+  }
+}
+
 const key = (text) => text.toLowerCase().replace(/[^a-z']/g, '')
 const symbolFor = (text) => SYMBOLS[key(text)] || ''
-const emojiFor = (text) => EMOJI[key(text)] || ''
+const emojiFor = (text) => EMOJI[key(text)] || EMOJI_I18N[cleanWord(text)] || ''
 
 function esc(text) {
   return String(text).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
@@ -377,6 +439,10 @@ function moodFor(li) {
   const keys = lineWords.map((w) => key(w.text))
   for (const rule of MOOD_RULES) {
     if (keys.some((k) => rule.words.includes(k))) return rule.emoji
+  }
+  for (const entry of lineWords) {
+    const em = EMOJI_I18N[cleanWord(entry.text)]
+    if (em) return em
   }
   return '🎧'
 }
@@ -574,6 +640,7 @@ function buildNative() {
     const bubble = document.createElement('div')
     bubble.className = 'nd-bubble'
     bubble.dataset.line = String(li)
+    if (RTL_RE.test(byLine[li].map((w) => w.text).join(' '))) bubble.dir = 'rtl'
     byLine[li].forEach((entry) => bubble.appendChild(wordSpan(entry)))
     row.appendChild(bubble)
     stack.appendChild(row)
@@ -787,6 +854,59 @@ function mapCardMarkup(place) {
 
 /* ---------------- render ---------------- */
 
+function liveText() {
+  const { mode, track } = state.live
+  if (mode === 'nothing') return { title: t('nothingTitle'), hint: t('nothingHint') }
+  if (mode === 'listening') return { title: t('listeningTitle'), hint: t('listeningHint') }
+  if (mode === 'nolyrics') {
+    return { title: t('noLyricsTitle').replace('{track}', track), hint: t('noLyricsHint') }
+  }
+  return { title: t('waitingTitle'), hint: t('waitingHint') }
+}
+
+function refreshLiveText() {
+  const box = stage.querySelector('.live-empty')
+  if (!box) return
+  const { title, hint } = liveText()
+  box.querySelector('#liveTitle').textContent = title
+  box.querySelector('#liveHint').textContent = hint
+  box.querySelector('#liveRetry').textContent = t('checkAgain')
+}
+
+function setLiveMode(mode, track = '') {
+  state.live = { mode, track }
+  refreshLiveText()
+}
+
+function applyLanguage() {
+  document.documentElement.lang = state.lang
+  const labels = { size: 'size', font: 'font', lock: 'lock', aesthetics: 'aesthetics' }
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.textContent = t(labels[tab.dataset.panel])
+  })
+  audioBtn.textContent = `◴ ${t('listen')}`
+  refreshLiveText()
+  savePrefs()
+}
+
+function liveEmptyEl() {
+  const box = document.createElement('div')
+  box.className = 'live-empty'
+  box.innerHTML = `
+    <span class="live-pulse" aria-hidden="true"><i></i></span>
+    <h3 id="liveTitle"></h3>
+    <p id="liveHint"></p>
+    <button class="live-retry" id="liveRetry" type="button"></button>`
+  const { title, hint } = liveText()
+  box.querySelector('#liveTitle').textContent = title
+  box.querySelector('#liveHint').textContent = hint
+  box.querySelector('#liveRetry').textContent = t('checkAgain')
+  box.querySelector('#liveRetry').addEventListener('click', () => {
+    if (window.verci) pollNowPlaying()
+  })
+  return box
+}
+
 function renderStage() {
   const style = STYLES[state.styleIndex]
   stage.dataset.style = style.id
@@ -795,6 +915,12 @@ function renderStage() {
   wordEls = []
   activeIndex = -2
   styleUpdate = null
+  if (!timedLines.length) {
+    stage.appendChild(liveEmptyEl())
+    updateMeta()
+    updateFrame()
+    return
+  }
   builders[style.id]?.()
   updateMeta()
   updateFrame()
@@ -913,7 +1039,7 @@ function renderFullscreen() {
   fsBg.style.background = track.art
   fsTrack.textContent = `${track.title} — ${track.artist}`
   fsLyrics.innerHTML = timedLines
-    .map((line, li) => `<p class="fs-line" data-line="${li}">${byLine[li].map((entry) => `<span class="w">${esc(entry.text)}</span>`).join('')}</p>`)
+    .map((line, li) => `<p class="fs-line" data-line="${li}"${RTL_RE.test(byLine[li].map((w) => w.text).join(' ')) ? ' dir="rtl"' : ''}>${byLine[li].map((entry) => `<span class="w">${esc(entry.text)}</span>`).join('')}</p>`)
     .join('')
   fsLines = [...fsLyrics.children]
   fsLine = -1
@@ -1039,6 +1165,7 @@ function savePrefs() {
       showUnlocked: state.showUnlocked,
       displayBuilt: state.displayBuilt,
       displayStudio: state.displayStudio,
+      lang: state.lang,
     }))
   } catch {
     /* storage may be unavailable */
@@ -1059,6 +1186,7 @@ function loadPrefs() {
     if (typeof saved.showUnlocked === 'boolean') state.showUnlocked = saved.showUnlocked
     if (typeof saved.displayBuilt === 'boolean') state.displayBuilt = saved.displayBuilt
     if (typeof saved.displayStudio === 'boolean') state.displayStudio = saved.displayStudio
+    if (typeof saved.lang === 'string' && I18N[saved.lang]) state.lang = saved.lang
   } catch {
     /* ignore malformed prefs */
   }
@@ -1097,7 +1225,13 @@ function stopListening() {
   listenTimer = 0
   listenKey = ''
   state.external = false
-  if (window.verci) pbDemo.textContent = 'Demo · simulated play'
+  timedLines = []
+  words = []
+  byLine = []
+  if (window.verci) {
+    pbDemo.textContent = 'Live · waiting'
+    renderStage()
+  }
 }
 
 function parseLrc(text) {
@@ -1116,7 +1250,7 @@ function linesFromRows(rows, duration) {
   return rows.map((row, i) => {
     const next = rows[i + 1]?.t ?? duration
     const span = Math.max(1.2, next - row.t)
-    const parts = row.text.split(/\s+/).filter(Boolean)
+    const parts = splitWords(row.text)
     const step = Math.min(0.62, span / (parts.length + 0.7))
     return { start: row.t, words: parts.map((text, j) => ({ text, at: row.t + j * step })) }
   })
@@ -1127,7 +1261,7 @@ function linesFromPlain(text, duration) {
   const span = duration / Math.max(1, rows.length)
   return rows.map((line, i) => {
     const start = i * span
-    const parts = line.split(/\s+/).filter(Boolean)
+    const parts = splitWords(line)
     const step = Math.min(0.7, span / (parts.length + 0.7))
     return { start, words: parts.map((t, j) => ({ text: t, at: start + j * step })) }
   })
@@ -1146,6 +1280,7 @@ async function applyExternalLyrics(info) {
   listenBusy = false
   if (!found?.synced && !found?.plain) {
     pbDemo.textContent = 'No lyrics found'
+    setLiveMode('nolyrics', info.title)
     toast(`No lyrics found for “${info.title}”.`)
     return
   }
@@ -1158,7 +1293,7 @@ async function applyExternalLyrics(info) {
   pbArtist.textContent = info.artist
   pbDuration.textContent = fmt(state.duration)
   pbProgress.setAttribute('aria-valuemax', String(Math.round(state.duration)))
-  pbDemo.textContent = `Live · ${sourceName(info.source)}`
+  pbDemo.textContent = `${found.synced ? 'Live' : 'Auto-timed'} · ${sourceName(info.source)}`
   renderStage()
   state.time = Math.min(state.duration, Math.max(0, info.position || 0))
   updateFrame()
@@ -1174,7 +1309,16 @@ async function pollNowPlaying() {
     return
   }
   if (!info || !info.title) {
-    pbDemo.textContent = 'Listening · nothing playing'
+    if (listenKey) {
+      listenKey = ''
+      state.external = false
+      timedLines = []
+      words = []
+      byLine = []
+      renderStage()
+    }
+    pbDemo.textContent = 'Live · waiting'
+    setLiveMode('nothing')
     return
   }
   const key = `${info.title}|${info.artist}`
@@ -1191,7 +1335,7 @@ async function pollNowPlaying() {
   }
 }
 
-function startListening() {
+function startListening(silent = false) {
   if (!window.verci?.nowPlaying) return false
   if (listenTimer) {
     stopListening()
@@ -1199,7 +1343,8 @@ function startListening() {
     return true
   }
   pbDemo.textContent = 'Listening…'
-  toast('Listening to Spotify, Apple Music and other media apps.')
+  setLiveMode('listening')
+  if (!silent) toast('Listening to Spotify, Apple Music and other media apps.')
   pollNowPlaying()
   listenTimer = setInterval(pollNowPlaying, 1000)
   return true
@@ -1269,6 +1414,7 @@ $('pbPrev').addEventListener('click', () => setTrack(state.trackIndex - 1))
 $('pbNext').addEventListener('click', () => setTrack(state.trackIndex + 1))
 
 pbProgress.addEventListener('pointerdown', (e) => {
+  if (document.body.classList.contains('is-live')) return
   const rect = pbProgress.getBoundingClientRect()
   const seek = (clientX) => {
     state.time = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)) * TRACKS[state.trackIndex].duration
@@ -1354,6 +1500,11 @@ displayStudioInput.addEventListener('change', () => {
 
 keepAwakeInput.addEventListener('change', updateWakeLock)
 
+uiLang.addEventListener('change', () => {
+  state.lang = uiLang.value
+  applyLanguage()
+})
+
 document.addEventListener('keydown', (e) => {
   const tag = e.target instanceof HTMLElement ? e.target.tagName : ''
   if (tag === 'INPUT' || tag === 'TEXTAREA') return
@@ -1377,6 +1528,7 @@ document.addEventListener('visibilitychange', () => {
 /* ---------------- init ---------------- */
 
 loadPrefs()
+uiLang.value = state.lang
 buildTiles()
 buildDots()
 sizeRange.value = String(Math.round(state.scale * 100))
@@ -1387,10 +1539,15 @@ displayBuiltInput.checked = state.displayBuilt
 displayStudioInput.checked = state.displayStudio
 document.querySelectorAll('.font-option').forEach((b) => b.classList.toggle('is-active', b.dataset.font === state.font))
 applyPalette(state.palette)
-setTrack(state.trackIndex)
-setPlaying(true)
+document.body.classList.add('is-live')
+pbPrev.hidden = true
+pbNext.hidden = true
+setTrack(0)
+applyLanguage()
+setPlaying(false)
 updateVisibility()
 requestAnimationFrame(tick)
+if (window.verci) startListening(true)
 
 function buildTiles() {
   tilesEl.innerHTML = STYLES.map((style, i) => {

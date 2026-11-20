@@ -97,6 +97,20 @@
 
               <div class="panel-inner" data-panel="aesthetics" hidden>
                 <div class="panel-head"><b>Aesthetics</b></div>
+                <div class="panel-sub">Language</div>
+                <div class="switch-row">
+                  <span>Interface</span>
+                  <select id="uiLang" class="lang-select" aria-label="Interface language">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="pt">Português</option>
+                    <option value="ja">日本語</option>
+                    <option value="ar">العربية</option>
+                  </select>
+                </div>
                 <div class="switch-row">
                   <span>Match the album cover</span>
                   <label class="toggle"><input type="checkbox" id="matchAlbum" checked /><span class="toggle-track"></span></label>
@@ -151,7 +165,7 @@
           <div class="pb-right">
             <button class="pb-chip" id="audioBtn" title="Read lyrics from Spotify, Apple Music or another app">◴ Listen</button>
             <button class="pb-chip" id="fsBtn2" title="Full screen">⛶</button>
-            <span class="pb-demo" id="pbDemo">Demo · simulated play</span>
+            <span class="pb-demo" id="pbDemo">Live · waiting</span>
           </div>
         </footer>
       </div>

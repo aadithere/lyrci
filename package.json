@@ -1,6 +1,6 @@
 {
   "name": "verci",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "Word-by-word lyrics from the music app you are already playing.",
@@ -11,7 +11,7 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "desktop": "electron .",
-    "dist:win": "vite build && electron-builder --win nsis"
+    "dist:win": "vite build && electron-builder --win nsis portable"
   },
   "devDependencies": {
     "electron": "^33.4.11",
@@ -37,6 +37,9 @@
       ],
       "icon": "build/icon.ico",
       "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Verci-${version}.exe"
     },
     "nsis": {
       "oneClick": false,

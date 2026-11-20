@@ -86,6 +86,18 @@ async function fetchLyrics(query) {
     /* no lyrics available */
   }
 
+  if (artist) {
+    try {
+      const res = await net.fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`, { headers })
+      if (res.ok) {
+        const hit = await res.json()
+        if (hit?.lyrics) return { synced: null, plain: hit.lyrics, title, artist }
+      }
+    } catch {
+      /* third provider unavailable */
+    }
+  }
+
   return { synced: null, plain: null }
 }
 

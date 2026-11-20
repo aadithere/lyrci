@@ -1,36 +1,56 @@
-# Blank website
+# Verci — live lyrics for whatever you're playing
 
-A clean HTML, CSS and JavaScript starting point with Vite's live reload.
-No framework, accounts, database or external services are needed.
+A desktop lyric window for Windows. It reads the **Windows media session** (Spotify, Apple Music, a browser tab, VLC — anything that publishes to the system media controls), fetches synced lyrics, and performs them word by word in 13 typographic styles.
 
-## Run locally
+No accounts, no API keys, no bundled songs. If nothing is playing, it says so.
 
-```sh
-bun install
-bun run dev
+![Native Design style](docs/screenshots/native-design.png)
+
+## What it does
+
+- **Live-only.** No stock tracks. The stage waits for real playback and follows the source app's position.
+- **Spotify Connect aware.** When playback is controlled from another device, the desktop Spotify client still publishes the track and position to Windows, so the lyrics follow it too.
+- **Synced lyrics** from [LRCLIB](https://lrclib.net) (exact match, then fuzzy search), with a [lyrics.ovh](https://lyrics.ovh) fallback. Plain-only lyrics are **auto-timed** and clearly labelled.
+- **13 lyric styles** — Ship, Fisheye, Visual, Fisheye Visual, Codestyle, Codestyle Visual, Branches, Web, Constellation, and the iPhone-screen family: Native Design, Money, Map and Notifications.
+- **Place-aware 3D map.** In Native Design, an aerial city card appears only when a place name is actually sung (Pitampura, Kashmere Gate, Connaught Place, Hauz Khas…), with a drawn route and a pulsing pin.
+- **Dramatic focus.** The active message scales up while the rest blur; the active word zooms and glows, and fullscreen lines snap into focus from a blur.
+- **Multilingual.** Interface in English, हिन्दी, Español, Français, Deutsch, Português, 日本語 and العربية. CJK/Thai lyrics are segmented into words with `Intl.Segmenter`, Arabic/Hebrew lines render RTL, and the emoji/mood layer covers common words in several languages.
+
+![Fullscreen mode](docs/screenshots/fullscreen.png)
+
+## How it works
+
+```
+Windows media session (WinRT)
+        │  PowerShell loop, JSON lines
+        ▼
+Electron main  ──►  LRCLIB / lyrics.ovh  ──►  LRC parser
+        │  IPC (preload)                        │
+        ▼                                       ▼
+Renderer: word timing, 13 styles, map, fullscreen
 ```
 
-Open the URL printed by Vite. The server binds to `0.0.0.0` so it also works
-in a Freebuff Cloud preview.
+- `electron/nowplaying.ps1` polls `GlobalSystemMediaTransportControlsSessionManager`, emitting title, artist, album, position, duration, playback state and source app.
+- `electron/main.js` keeps the latest snapshot, fetches lyrics (LRCLIB exact → LRCLIB search → lyrics.ovh) and exposes both over IPC.
+- `src/main.js` parses LRC, distributes word timings, and drives the lyric UI from the player's real position.
 
-## Make it yours
+## Run it
 
-- `index.html` — page content, title and description.
-- `src/style.css` — styles, colors and typography.
-- `src/main.js` — browser behavior and the stylesheet import.
-- `public/` — create this folder for images and other static files.
-
-Replace the greeting with your website. Add a framework only if your project
-needs one.
-
-## Build and publish
-
-```sh
-bun run build
-bun run preview
+```bash
+npm install
+npm run dev        # browser preview (no media access)
+npm run desktop    # Electron app
+npm run dist:win   # NSIS installer in release/
 ```
 
-The build produces `dist/`. When the user asks to publish on Freebuff Sites,
-use `sites_deploy` with `deploy.json`. Its tiny `worker/index.js` serves the
-built assets through the platform's `ASSETS` binding. No integrations or
-secrets are required. Other static hosts can serve `dist/` directly.
+## Download
+
+Windows 10/11 x64: [latest release](https://github.com/aadithere/lyrci/releases/latest) — `Verci-Setup-1.0.0.exe` installs per-user with Start-menu and desktop shortcuts; `Verci-1.0.0.exe` is the portable build.
+
+## Limitations
+
+- Media detection is Windows-only; the browser preview shows the waiting state.
+- Lyrics coverage depends on LRCLIB/lyrics.ovh. There is no AI lyric generation — when neither provider has a match, the app says so.
+- Spotify Connect needs the desktop Spotify client running to publish the session.
+- Builds are unsigned, so SmartScreen may warn.
+- A design homage to [Verci](https://www.verci.xyz/); not affiliated with Verci, Spotify or Apple. Map imagery is generated, not Apple Maps.

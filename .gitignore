@@ -2,6 +2,8 @@ node_modules/
 dist/
 release/
 .electron-dist/
+.gh-*.json
+.release-body.md
 *.log
 verci-*.png
 .DS_Store

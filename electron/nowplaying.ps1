@@ -16,11 +16,33 @@ function Await($WinRtTask, $ResultType) {
 [Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager, Windows.Media.Control, ContentType = WindowsRuntime] | Out-Null
 $manager = Await ([Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager]::RequestAsync()) ([Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager])
 
+function Get-SessionApps {
+  $apps = @()
+  try {
+    foreach ($s in @($manager.GetSessions())) {
+      try {
+        $appInfo = $s.GetPlaybackInfo()
+        $apps += [ordered]@{
+          id      = [string]$s.SourceAppUserModelId
+          playing = ($appInfo.PlaybackStatus.ToString() -eq 'Playing')
+        }
+      } catch {
+        $apps += [ordered]@{ id = [string]$s.SourceAppUserModelId; playing = $false }
+      }
+    }
+  } catch {
+    $apps = @()
+  }
+  return @($apps)
+}
+
 while ($true) {
   try {
     $session = $manager.GetCurrentSession()
+    $apps = Get-SessionApps
     if ($null -eq $session) {
-      Write-Output '{"playing":false}'
+      $idle = [ordered]@{ playing = $false; apps = @($apps) }
+      Write-Output ($idle | ConvertTo-Json -Compress -Depth 5)
     } else {
       $props = Await ($session.TryGetMediaPropertiesAsync()) ([Windows.Media.Control.GlobalSystemMediaTransportControlsSessionMediaProperties])
       $timeline = $session.GetTimelineProperties()
@@ -33,11 +55,12 @@ while ($true) {
         duration = [math]::Round($timeline.EndTime.TotalSeconds, 2)
         playing  = ($info.PlaybackStatus.ToString() -eq 'Playing')
         source   = [string]$session.SourceAppUserModelId
+        apps     = @($apps)
       }
-      Write-Output ($obj | ConvertTo-Json -Compress)
+      Write-Output ($obj | ConvertTo-Json -Compress -Depth 5)
     }
   } catch {
-    Write-Output '{"playing":false}'
+    Write-Output '{"playing":false,"apps":[]}'
   }
   [Console]::Out.Flush()
   Start-Sleep -Milliseconds 900

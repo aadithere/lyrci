@@ -2,6 +2,8 @@ import './style.css'
 import mapA from './assets/map-3d-a.jpg'
 import mapB from './assets/map-3d-b.jpg'
 
+document.body.classList.toggle('is-desktop', Boolean(window.verci))
+
 /* ---------------- languages ---------------- */
 
 const I18N = {
@@ -238,10 +240,10 @@ const STYLES = [
   { id: 'branches', name: 'Branches', group: 'Motion scenes', desc: 'A line draws itself, and each word lights a node on it.' },
   { id: 'web', name: 'Web', group: 'Motion scenes', desc: 'Each line spun into a spider’s web, a strand for every word.' },
   { id: 'constellation', name: 'Constellation', group: 'Motion scenes', desc: 'Each line traced as a constellation, star by star.' },
-  { id: 'native-design', name: 'Native Design', group: 'iPhone screens', desc: 'The song as a Messages thread, a bubble for every line.' },
-  { id: 'native-money', name: 'Native Design Money', group: 'iPhone screens', desc: 'The song as a run of payments, one for every line.' },
-  { id: 'native-map', name: 'Native Design Map', group: 'iPhone screens', desc: 'A walk across San Francisco, with a pin for every line.' },
-  { id: 'native-notifications', name: 'Native Design Notifications', group: 'iPhone screens', desc: 'Lines arrive as lock-screen notifications, stacks and widgets.' },
+  { id: 'native-design', name: 'Native Design', group: 'System screens', desc: 'The song as a Messages thread, a bubble for every line.' },
+  { id: 'native-money', name: 'Native Design Money', group: 'System screens', desc: 'The song as a run of payments, one for every line.' },
+  { id: 'native-map', name: 'Native Design Map', group: 'System screens', desc: 'A walk across San Francisco, with a pin for every line.' },
+  { id: 'native-notifications', name: 'Native Design Notifications', group: 'System screens', desc: 'Lines arrive as lock-screen notifications, stacks and widgets.' },
 ]
 
 const PLACES = ['Ferry Building', 'Union Square', 'Chinatown', 'North Beach', 'Coit Tower', 'Embarcadero Plaza']
@@ -302,7 +304,7 @@ const state = {
   time: 0,
   playing: true,
   scale: 1,
-  font: "'SF Pro Display', -apple-system, 'Inter', 'Segoe UI', sans-serif",
+  font: "'Segoe UI Variable Display', 'Segoe UI', sans-serif",
   matchAlbum: true,
   palette: { ...TRACKS[0].palette },
   selected: null,
@@ -902,7 +904,10 @@ function liveEmptyEl() {
   box.querySelector('#liveHint').textContent = hint
   box.querySelector('#liveRetry').textContent = t('checkAgain')
   box.querySelector('#liveRetry').addEventListener('click', () => {
-    if (window.verci) pollNowPlaying()
+    if (window.verci) {
+      listenKey = ''
+      pollNowPlaying()
+    }
   })
   return box
 }
@@ -917,6 +922,11 @@ function renderStage() {
   styleUpdate = null
   if (!timedLines.length) {
     stage.appendChild(liveEmptyEl())
+    if (state.fsOpen) {
+      fsLyrics.innerHTML = ''
+      fsLines = []
+      fsLine = -1
+    }
     updateMeta()
     updateFrame()
     return
@@ -1178,7 +1188,9 @@ function loadPrefs() {
     if (Number.isInteger(saved.styleIndex)) state.styleIndex = Math.min(STYLES.length - 1, Math.max(0, saved.styleIndex))
     if (Number.isInteger(saved.trackIndex)) state.trackIndex = saved.trackIndex % TRACKS.length
     if (typeof saved.scale === 'number') state.scale = Math.min(1.5, Math.max(0.7, saved.scale))
-    if (typeof saved.font === 'string') state.font = saved.font
+    if (typeof saved.font === 'string' && [...document.querySelectorAll('.font-option')].some((b) => b.dataset.font === saved.font)) {
+      state.font = saved.font
+    }
     if (typeof saved.matchAlbum === 'boolean') state.matchAlbum = saved.matchAlbum
     if (saved.palette?.c1) state.palette = saved.palette
     if (typeof saved.selected === 'string') state.selected = saved.selected
@@ -1208,7 +1220,8 @@ function loadAudio(file) {
 
 let listenTimer = 0
 let listenKey = ''
-let listenBusy = false
+let pollBusy = false
+let lyricsRequestId = 0
 
 const sourceName = (id = '') => {
   const s = String(id).toLowerCase()
@@ -1220,16 +1233,56 @@ const sourceName = (id = '') => {
   return 'media app'
 }
 
+const statusPill = document.querySelector('.status-pill')
+const appBadges = {
+  spotify: { label: 'Spotify', match: ['spotify'], el: document.querySelector('.app-badge[data-app="spotify"]') },
+  apple: { label: 'Apple Music', match: ['applemusic', 'apple music', 'itunes'], el: document.querySelector('.app-badge[data-app="apple"]') },
+}
+
+function updateSourceDots(apps) {
+  const sessions = Array.isArray(apps) ? apps : []
+  const states = {}
+  for (const [key, badge] of Object.entries(appBadges)) {
+    if (!badge.el) continue
+    const hit = sessions.find((session) =>
+      badge.match.some((needle) => String(session?.id || '').toLowerCase().includes(needle)),
+    )
+    const next = hit ? (hit.playing ? 'playing' : 'idle') : 'off'
+    states[key] = next
+    badge.el.dataset.state = next
+    badge.el.classList.toggle('is-playing', next === 'playing')
+    badge.el.classList.toggle('is-idle', next === 'idle')
+    badge.el.setAttribute(
+      'aria-label',
+      `${badge.label}: ${next === 'playing' ? 'playing' : next === 'idle' ? 'open but paused' : 'not detected'}`,
+    )
+  }
+  if (!statusPill) return
+  const playing = Object.entries(states).filter(([, s]) => s === 'playing').map(([key]) => appBadges[key].label)
+  const idle = Object.entries(states).filter(([, s]) => s === 'idle').map(([key]) => appBadges[key].label)
+  statusPill.dataset.state = playing.length ? 'playing' : idle.length ? 'idle' : 'off'
+  statusPill.title = playing.length
+    ? `${playing.join(' and ')} playing`
+    : idle.length
+      ? `${idle.join(' and ')} open, nothing playing`
+      : 'No Spotify or Apple Music session detected'
+}
+
+updateSourceDots([])
+
 function stopListening() {
   if (listenTimer) clearInterval(listenTimer)
   listenTimer = 0
   listenKey = ''
+  lyricsRequestId++
   state.external = false
   timedLines = []
   words = []
   byLine = []
+  updateSourceDots([])
   if (window.verci) {
     pbDemo.textContent = 'Live · waiting'
+    setLiveMode('waiting')
     renderStage()
   }
 }
@@ -1267,9 +1320,8 @@ function linesFromPlain(text, duration) {
   })
 }
 
-async function applyExternalLyrics(info) {
-  if (!window.verci?.lyrics || listenBusy) return
-  listenBusy = true
+async function applyExternalLyrics(info, requestId) {
+  if (!window.verci?.lyrics) return
   pbDemo.textContent = 'Finding lyrics…'
   let found = { synced: null, plain: null }
   try {
@@ -1277,10 +1329,16 @@ async function applyExternalLyrics(info) {
   } catch {
     found = { synced: null, plain: null }
   }
-  listenBusy = false
+  if (requestId !== lyricsRequestId || listenKey !== `${info.title}|${info.artist}`) return
   if (!found?.synced && !found?.plain) {
+    state.external = false
+    timedLines = []
+    words = []
+    byLine = []
+    prepareWords()
     pbDemo.textContent = 'No lyrics found'
     setLiveMode('nolyrics', info.title)
+    renderStage()
     toast(`No lyrics found for “${info.title}”.`)
     return
   }
@@ -1288,6 +1346,15 @@ async function applyExternalLyrics(info) {
   state.duration = info.duration > 0 ? info.duration : 240
   const rows = found.synced ? parseLrc(found.synced) : []
   timedLines = rows.length ? linesFromRows(rows, state.duration) : linesFromPlain(found.plain, state.duration)
+  if (!timedLines.length) {
+    state.external = false
+    words = []
+    byLine = []
+    pbDemo.textContent = 'No lyrics found'
+    setLiveMode('nolyrics', info.title)
+    renderStage()
+    return
+  }
   prepareWords()
   pbTitle.textContent = info.title
   pbArtist.textContent = info.artist
@@ -1301,37 +1368,59 @@ async function applyExternalLyrics(info) {
 }
 
 async function pollNowPlaying() {
-  if (!window.verci?.nowPlaying) return
-  let info = null
+  if (!window.verci?.nowPlaying || pollBusy) return
+  pollBusy = true
   try {
-    info = await window.verci.nowPlaying()
-  } catch {
-    return
-  }
-  if (!info || !info.title) {
-    if (listenKey) {
-      listenKey = ''
+    let info = null
+    try {
+      info = await window.verci.nowPlaying()
+    } catch {
+      return
+    }
+    updateSourceDots(info?.apps)
+    if (!info || !info.title) {
+      if (listenKey) {
+        listenKey = ''
+        lyricsRequestId++
+        state.external = false
+        state.time = 0
+        timedLines = []
+        words = []
+        byLine = []
+        renderStage()
+      }
+      pbDemo.textContent = 'Live · waiting'
+      setLiveMode('nothing')
+      setPlaying(false)
+      return
+    }
+    const key = `${info.title}|${info.artist}`
+    if (key !== listenKey) {
+      listenKey = key
+      const requestId = ++lyricsRequestId
       state.external = false
+      state.duration = info.duration > 0 ? info.duration : 240
+      state.time = Math.max(0, info.position || 0)
       timedLines = []
       words = []
       byLine = []
+      pbTitle.textContent = info.title
+      pbArtist.textContent = info.artist
+      pbDuration.textContent = fmt(state.duration)
+      pbProgress.setAttribute('aria-valuemax', String(Math.round(state.duration)))
+      pbDemo.textContent = 'Finding lyrics…'
+      setLiveMode('listening')
       renderStage()
+      void applyExternalLyrics(info, requestId)
     }
-    pbDemo.textContent = 'Live · waiting'
-    setLiveMode('nothing')
-    return
-  }
-  const key = `${info.title}|${info.artist}`
-  if (key !== listenKey) {
-    listenKey = key
-    state.external = false
-    await applyExternalLyrics(info)
-  }
-  if (state.external) {
-    if (info.duration > 0) state.duration = info.duration
-    state.time = Math.max(0, info.position || 0)
-    updateFrame()
     if (Boolean(info.playing) !== state.playing) setPlaying(Boolean(info.playing))
+    if (state.external) {
+      if (info.duration > 0) state.duration = info.duration
+      state.time = Math.max(0, info.position || 0)
+      updateFrame()
+    }
+  } finally {
+    pollBusy = false
   }
 }
 

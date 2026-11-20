@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 let win = null
 let npProc = null
 let restartTimer = null
-let latest = { playing: false }
+let latest = { playing: false, apps: [] }
 
 function startNowPlaying() {
   if (npProc) return
@@ -110,6 +110,12 @@ function createWindow() {
     backgroundColor: '#050506',
     autoHideMenuBar: true,
     title: 'Verci',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#0b0b10',
+      symbolColor: '#e8e8ee',
+      height: 44,
+    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,

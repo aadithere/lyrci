@@ -1,0 +1,39 @@
+{
+  "name": "verci",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Word-by-word lyrics from the music app you are already playing.",
+  "author": "aadithere",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "desktop": "electron .",
+    "dist:win": "vite build && electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0",
+    "vite": "^8.3.0"
+  },
+  "build": {
+    "appId": "com.verci.lyrics",
+    "productName": "Verci",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "artifactName": "Verci-${version}.exe"
+    }
+  }
+}

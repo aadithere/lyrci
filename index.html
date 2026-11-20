@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Verci 2 demo: thirteen ways to read a song, word by word." />
+    <title>Verci — word-by-word lyrics on your Mac lock screen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="desktop">
+      <div class="window" id="window">
+        <div class="window-body" id="windowBody">
+          <section class="preview" id="preview">
+            <div class="preview-bg" id="previewBg"></div>
+            <div class="preview-grain"></div>
+            <div class="preview-fade"></div>
+
+            <header class="titlebar">
+              <div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+              <nav class="tabs" aria-label="Settings">
+                <button class="tab" data-panel="size">Size</button>
+                <button class="tab" data-panel="font">Font</button>
+                <button class="tab" data-panel="lock">Lock Screen</button>
+                <button class="tab" data-panel="aesthetics">Aesthetics</button>
+              </nav>
+              <div class="titlebar-right">
+                <div class="pill status-pill" title="Spotify and Apple Music connected">
+                  <span class="player-dot spotify"></span>
+                  <span class="player-dot apple"></span>
+                </div>
+                <div class="pill util-pill">
+                  <button class="util-btn" id="syncBtn" aria-label="Read what Spotify or Apple Music is playing" title="Read what Spotify or Apple Music is playing">◴</button>
+                  <button class="util-btn" id="fullscreenBtn" aria-label="Full screen" title="Full screen (F)">⛶</button>
+                </div>
+              </div>
+            </header>
+
+            <div class="stage" id="stage" data-style="native-design"></div>
+
+            <button class="chev chev-left" id="prevStyle" aria-label="Previous style">‹</button>
+            <button class="chev chev-right" id="nextStyle" aria-label="Next style">›</button>
+
+            <div class="hidden-note" id="hiddenNote" hidden>
+              <span class="hidden-note-icon">◴</span>
+              <b>Lyrics hidden while unlocked</b>
+              <span>Turn on “Show lyrics while unlocked” in Lock Screen.</span>
+            </div>
+
+            <div class="panel" id="panel" hidden>
+              <div class="panel-inner" data-panel="size">
+                <div class="panel-head"><b>Size</b><button class="panel-reset" data-reset="size">Reset</button></div>
+                <div class="size-row">
+                  <span class="size-a small">A</span>
+                  <input type="range" id="sizeRange" min="70" max="150" step="1" value="100" aria-label="Lyric size" />
+                  <span class="size-a big">A</span>
+                </div>
+                <div class="panel-value" id="sizeValue">100%</div>
+              </div>
+
+              <div class="panel-inner" data-panel="font" hidden>
+                <div class="panel-head"><b>Font</b></div>
+                <div class="font-list" id="fontList">
+                  <button class="font-option is-active" data-font="'SF Pro Display', -apple-system, 'Inter', 'Segoe UI', sans-serif">SF Pro</button>
+                  <button class="font-option" data-font="'SF Pro Rounded', ui-rounded, 'Inter', sans-serif">SF Rounded</button>
+                  <button class="font-option" data-font="'New York', Georgia, serif">New York</button>
+                  <button class="font-option" data-font="'Helvetica Neue', 'Inter', sans-serif">Helvetica Neue</button>
+                  <button class="font-option" data-font="'Avenir Next', 'Inter', sans-serif">Avenir Next</button>
+                  <button class="font-option" data-font="Futura, 'Trebuchet MS', sans-serif">Futura</button>
+                  <button class="font-option" data-font="Didot, 'Bodoni MT', serif">Didot</button>
+                </div>
+              </div>
+
+              <div class="panel-inner" data-panel="lock" hidden>
+                <div class="panel-head"><b>Lock Screen</b></div>
+                <div class="switch-row">
+                  <span>Show lyrics while unlocked</span>
+                  <label class="toggle"><input type="checkbox" id="showUnlocked" checked /><span class="toggle-track"></span></label>
+                </div>
+                <div class="switch-row">
+                  <span>Keep the screen awake</span>
+                  <label class="toggle"><input type="checkbox" id="keepAwake" /><span class="toggle-track"></span></label>
+                </div>
+                <div class="panel-sub">Show on</div>
+                <div class="switch-row">
+                  <span>Built-in Display</span>
+                  <label class="toggle"><input type="checkbox" id="displayBuilt" checked /><span class="toggle-track"></span></label>
+                </div>
+                <div class="switch-row">
+                  <span>Studio Display</span>
+                  <label class="toggle"><input type="checkbox" id="displayStudio" /><span class="toggle-track"></span></label>
+                </div>
+              </div>
+
+              <div class="panel-inner" data-panel="aesthetics" hidden>
+                <div class="panel-head"><b>Aesthetics</b></div>
+                <div class="switch-row">
+                  <span>Match the album cover</span>
+                  <label class="toggle"><input type="checkbox" id="matchAlbum" checked /><span class="toggle-track"></span></label>
+                </div>
+                <div class="panel-sub">Lyric colours</div>
+                <div class="wells">
+                  <label>Lyric<input type="color" id="colorLyric" value="#e7c9d1" /></label>
+                  <label>Highlight<input type="color" id="colorHighlight" value="#fb6e90" /></label>
+                  <label>Secondary<input type="color" id="colorSecondary" value="#9b9ba3" /></label>
+                </div>
+                <button class="panel-reset wide" data-reset="colors">Reset colors</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="style-meta">
+            <div class="meta-eyebrow" id="metaGroup">iPhone screens</div>
+            <h1 id="metaTitle">Native Design</h1>
+            <p id="metaDesc">The song as a Messages thread, a bubble for every line.</p>
+            <div class="meta-actions">
+              <button class="select-btn" id="selectBtn">Select</button>
+              <button class="pin-btn" id="pinBtn" aria-label="Pin this style" aria-pressed="false">
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+                  <path d="M9 3h6M12 3v6M8 9h8l-1.4 6h-5.2L8 9zM12 15v6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </section>
+
+          <div class="dots" id="dots" role="tablist" aria-label="Styles"></div>
+
+          <section class="all-styles">
+            <div class="all-head"><h2>All styles</h2><span id="styleCount">13 styles</span></div>
+            <div class="tiles" id="tiles"></div>
+          </section>
+        </div>
+
+        <footer class="playbar">
+          <div class="pb-now">
+            <div class="pb-art" id="pbArt"></div>
+            <div class="pb-meta"><b id="pbTitle">Glass Hours</b><span id="pbArtist">Nova Vale</span></div>
+          </div>
+          <div class="pb-transport">
+            <button class="pb-btn" id="pbPrev" aria-label="Previous track">◄◄</button>
+            <button class="pb-btn pb-play" id="pbPlay" aria-label="Pause">❚❚</button>
+            <button class="pb-btn" id="pbNext" aria-label="Next track">▶▶</button>
+            <span class="pb-time"><span id="pbElapsed">0:00</span> / <span id="pbDuration">0:46</span></span>
+          </div>
+          <div class="pb-progress" id="pbProgress" role="slider" tabindex="0" aria-label="Seek">
+            <div class="pb-fill" id="pbFill"></div>
+          </div>
+          <div class="pb-right">
+            <button class="pb-chip" id="audioBtn" title="Read lyrics from Spotify, Apple Music or another app">◴ Listen</button>
+            <button class="pb-chip" id="fsBtn2" title="Full screen">⛶</button>
+            <span class="pb-demo" id="pbDemo">Demo · simulated play</span>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <div class="fullscreen" id="fullscreen" hidden>
+      <div class="fs-bg" id="fsBg"></div>
+      <div class="fs-grain"></div>
+      <div class="fs-top">
+        <span class="fs-mood" id="fsMood">◴</span>
+        <span class="fs-track" id="fsTrack">Glass Hours — Nova Vale</span>
+        <button class="fs-close" id="fsClose">Close <span>Esc</span></button>
+      </div>
+      <div class="fs-lyrics" id="fsLyrics"></div>
+      <div class="fs-bottom">
+        <div class="fs-progress"><div class="fs-fill" id="fsFill"></div></div>
+        <div class="fs-meta"><span id="fsTime">0:00</span><button class="fs-play" id="fsPlay">❚❚</button></div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+    <input type="file" id="audioFile" accept="audio/*" hidden />
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

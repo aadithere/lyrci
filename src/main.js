@@ -1,4 +1,6 @@
 import './style.css'
+import mapA from './assets/map-3d-a.jpg'
+import mapB from './assets/map-3d-b.jpg'
 
 /* ---------------- word symbols (the Visual map) ---------------- */
 
@@ -581,7 +583,7 @@ function buildNative() {
 
   const mapCard = document.createElement('div')
   mapCard.className = 'nd-map'
-  mapCard.innerHTML = `<div class="nd-map-canvas">${miniMapSvg()}</div><span class="nd-map-brand">◉ Maps</span>`
+  mapCard.innerHTML = '<div class="nd-map-canvas"></div>'
 
   const place = document.createElement('div')
   place.className = 'nd-place'
@@ -602,7 +604,7 @@ function buildNative() {
     if (heard && bubble) {
       if (shownPlace !== found.name) {
         shownPlace = found.name
-        mapCard.querySelector('.nd-map-canvas').innerHTML = miniMapSvg(found.name)
+        mapCard.querySelector('.nd-map-canvas').innerHTML = mapCardMarkup(found.name)
         place.querySelector('span').textContent = found.name
       }
       if (mapCard.parentElement !== bubble) bubble.insertBefore(mapCard, bubble.firstChild)
@@ -764,24 +766,23 @@ function mapSvg() {
   </svg>`
 }
 
-function miniMapSvg(place = 'Marina Bay') {
-  return `<svg viewBox="0 0 360 118" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <rect width="360" height="118" fill="#eef0e7"/>
-    <rect x="0" y="84" width="360" height="34" fill="#cfe4c4"/>
-    <path d="M0 0 H70 C60 40 52 80 44 118 H0 Z" fill="#a9d0e2"/>
-    <path d="M0 26 H360 M0 58 H360 M0 88 H360" stroke="#ded9cd" stroke-width="8"/>
-    <path d="M0 26 H360 M0 58 H360 M0 88 H360" stroke="#fdfcf8" stroke-width="4.5"/>
-    <path d="M84 0 V118 M182 0 V118 M282 0 V118" stroke="#ded9cd" stroke-width="7"/>
-    <path d="M84 0 V118 M182 0 V118 M282 0 V118" stroke="#fdfcf8" stroke-width="4"/>
-    <path d="M18 96 C110 74 190 52 342 16" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-    <path d="M18 96 C110 74 190 52 342 16" fill="none" stroke="#2f7cf6" stroke-width="4.5" stroke-linecap="round"/>
-    <text class="map-label" x="96" y="30" style="font-size:8px">${esc(place)}</text>
-    <g transform="translate(190 52)">
-      <circle r="13" fill="#2f7cf6" opacity="0.22"/>
-      <circle r="8" fill="#2f7cf6" stroke="#fff" stroke-width="2.5"/>
-      <circle r="2.6" fill="#fff"/>
-    </g>
-  </svg>`
+function mapCardMarkup(place) {
+  const hash = [...place].reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
+  const photo = /connaught/i.test(place) || hash % 5 === 0 ? mapB : mapA
+  const pinX = 56 + (hash % 26)
+  const pinY = 44 + (hash % 16)
+  const endX = (pinX / 100) * 360
+  const endY = (pinY / 100) * 120
+  return `
+    <img class="nd-map-photo" src="${photo}" alt="" draggable="false" />
+    <svg class="nd-map-route" viewBox="0 0 360 120" preserveAspectRatio="none" aria-hidden="true">
+      <path class="route-casing" d="M-12 112 C 70 104, 150 92, ${endX} ${endY}" />
+      <path class="route-line" d="M-12 112 C 70 104, 150 92, ${endX} ${endY}" />
+    </svg>
+    <span class="nd-map-place">${esc(place)}</span>
+    <span class="nd-map-brand">◉ Maps</span>
+    <span class="nd-map-pin" style="left:${pinX}%;top:${pinY}%"><i></i></span>
+  `
 }
 
 /* ---------------- render ---------------- */

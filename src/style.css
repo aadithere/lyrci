@@ -802,14 +802,31 @@ h1, h2, h3, p { margin: 0; }
   font-weight: 500;
   line-height: 1.32;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s, opacity 0.45s, filter 0.45s;
   backdrop-filter: blur(8px);
+  opacity: 0.38;
+  filter: blur(1.1px);
 }
 .nd-row.out .nd-bubble { background: #0a84ff; color: #fff; }
 .nd-bubble .w { color: inherit; opacity: 0.55; }
 .nd-bubble .w.is-sung { opacity: 0.88; }
-.nd-bubble .w.is-active { color: #fff; opacity: 1; background: rgba(255, 255, 255, 0.2); border-radius: 5px; padding: 0 3px; }
-.nd-bubble.is-current { transform: scale(1.02); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45); z-index: 2; }
+.nd-bubble .w { display: inline-block; transition: transform 0.25s, background 0.25s, text-shadow 0.25s; }
+.nd-bubble .w.is-active {
+  color: #fff;
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 5px;
+  padding: 0 3px;
+  transform: scale(1.12);
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.55);
+}
+.nd-bubble.is-current {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.045);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  z-index: 2;
+}
 .nd-map {
   margin: -9px -13px 8px;
   border-radius: 18px 18px 6px 6px;
@@ -822,8 +839,73 @@ h1, h2, h3, p { margin: 0; }
   from { opacity: 0; transform: translateY(-6px) scale(0.97); }
   to { opacity: 1; transform: none; }
 }
-.nd-map-canvas { height: 100px; }
-.nd-map-canvas svg { display: block; width: 100%; height: 100%; }
+.nd-map-canvas { position: relative; height: 118px; overflow: hidden; background: #cfd8c8; }
+.nd-map-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.06);
+  animation: nd-map-drift 14s ease-in-out infinite alternate;
+}
+@keyframes nd-map-drift {
+  from { transform: scale(1.04) translate3d(0, 0, 0); }
+  to { transform: scale(1.16) translate3d(-2.5%, -1.5%, 0); }
+}
+.nd-map-canvas::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 10, 14, 0.3), transparent 34%, transparent 62%, rgba(8, 10, 14, 0.45));
+  pointer-events: none;
+}
+.nd-map-route { position: absolute; inset: 0; width: 100%; height: 100%; }
+.nd-map-route path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 430;
+  stroke-dashoffset: 430;
+  animation: nd-route 1.15s ease forwards;
+}
+.nd-map-route .route-casing { stroke: rgba(255, 255, 255, 0.92); stroke-width: 7; }
+.nd-map-route .route-line { stroke: #2f7cf6; stroke-width: 4; animation-delay: 0.12s; }
+@keyframes nd-route { to { stroke-dashoffset: 0; } }
+.nd-map-pin {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #2f7cf6;
+  border: 2.5px solid #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+}
+.nd-map-pin i {
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(47, 124, 246, 0.75);
+  animation: nd-pin 1.8s ease-out infinite;
+}
+@keyframes nd-pin {
+  from { transform: scale(0.6); opacity: 0.9; }
+  to { transform: scale(1.5); opacity: 0; }
+}
+.nd-map-place {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: rgba(12, 14, 18, 0.6);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
 .nd-map-brand {
   position: absolute;
   left: 8px;
@@ -1115,7 +1197,7 @@ h1, h2, h3, p { margin: 0; }
   animation: fsIn 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 @keyframes fsIn {
-  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  from { opacity: 0; transform: scale(0.86) translateY(18px); filter: blur(14px); }
 }
 .fs-line .w {
   color: inherit;

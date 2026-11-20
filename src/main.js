@@ -1470,6 +1470,30 @@ $('fullscreenBtn').addEventListener('click', openFullscreen)
 $('fsBtn2').addEventListener('click', openFullscreen)
 $('syncBtn').addEventListener('click', requestAudioSync)
 $('audioBtn').addEventListener('click', requestAudioSync)
+
+/* ---------------- updates ---------------- */
+
+const updateBtn = $('updateBtn')
+let updateReady = false
+
+function showUpdateState(status) {
+  if (!updateBtn) return
+  const ready = status?.state === 'ready'
+  updateBtn.hidden = !ready
+  updateBtn.classList.toggle('update-ready', ready)
+  if (!ready) return
+  const label = `Restart to install Verci ${status.version || ''}`.trim()
+  updateBtn.title = label
+  updateBtn.setAttribute('aria-label', label)
+  if (!updateReady) toast(`Verci ${status.version} is ready — restart to install.`)
+  updateReady = true
+}
+
+if (window.verci?.onUpdateState) {
+  window.verci.onUpdateState(showUpdateState)
+  window.verci.updateState?.().then(showUpdateState).catch(() => {})
+  updateBtn?.addEventListener('click', () => window.verci.installUpdate())
+}
 $('fsClose').addEventListener('click', closeFullscreen)
 fsPlay.addEventListener('click', () => setPlaying(!state.playing))
 fullscreen.addEventListener('click', (e) => {

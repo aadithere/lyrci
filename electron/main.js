@@ -1,18 +1,26 @@
 import { app, BrowserWindow, ipcMain, net } from 'electron'
+import electronUpdater from 'electron-updater'
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const { autoUpdater } = electronUpdater
 
 let win = null
 let npProc = null
 let restartTimer = null
 let latest = { playing: false, apps: [] }
+let updateState = { state: 'idle', version: null, percent: 0, message: null }
+let updateTimer = null
 
 function startNowPlaying() {
   if (npProc) return
-  const script = path.join(__dirname, 'nowplaying.ps1')
+  // PowerShell cannot read a script from inside app.asar, so packaged builds
+  // get a copy in resources/ via the extraResources config.
+  const script = app.isPackaged
+    ? path.join(process.resourcesPath, 'nowplaying.ps1')
+    : path.join(__dirname, 'nowplaying.ps1')
   npProc = spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', script], {
     windowsHide: true,
     stdio: ['ignore', 'pipe', 'ignore'],
@@ -101,6 +109,32 @@ async function fetchLyrics(query) {
   return { synced: null, plain: null }
 }
 
+function sendUpdateState(patch) {
+  updateState = { ...updateState, ...patch }
+  if (win && !win.isDestroyed()) win.webContents.send('update-state', updateState)
+}
+
+function setupUpdater() {
+  if (!app.isPackaged) return
+  autoUpdater.autoDownload = true
+  autoUpdater.autoInstallOnAppQuit = true
+  autoUpdater.on('checking-for-update', () => sendUpdateState({ state: 'checking' }))
+  autoUpdater.on('update-available', (info) => sendUpdateState({ state: 'available', version: info.version, percent: 0 }))
+  autoUpdater.on('update-not-available', () => sendUpdateState({ state: 'current' }))
+  autoUpdater.on('download-progress', (progress) =>
+    sendUpdateState({ state: 'downloading', percent: Math.round(progress.percent || 0) }),
+  )
+  autoUpdater.on('update-downloaded', (info) => sendUpdateState({ state: 'ready', version: info.version, percent: 100 }))
+  autoUpdater.on('error', (error) => sendUpdateState({ state: 'error', message: String(error?.message || error) }))
+
+  const check = () =>
+    autoUpdater.checkForUpdates().catch((error) =>
+      sendUpdateState({ state: 'error', message: String(error?.message || error) }),
+    )
+  setTimeout(check, 5000)
+  updateTimer = setInterval(check, 30 * 60 * 1000)
+}
+
 function createWindow() {
   win = new BrowserWindow({
     width: 1280,
@@ -130,8 +164,17 @@ function createWindow() {
 app.whenReady().then(() => {
   ipcMain.handle('now-playing', () => latest)
   ipcMain.handle('lyrics', (_event, query) => fetchLyrics(query || {}))
+  ipcMain.handle('update-state', () => updateState)
+  ipcMain.handle('update-check', () => {
+    if (app.isPackaged) autoUpdater.checkForUpdates().catch(() => {})
+    return updateState
+  })
+  ipcMain.handle('update-install', () => {
+    if (app.isPackaged) autoUpdater.quitAndInstall()
+  })
   startNowPlaying()
   createWindow()
+  setupUpdater()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -144,5 +187,6 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   if (restartTimer) clearTimeout(restartTimer)
+  if (updateTimer) clearInterval(updateTimer)
   if (npProc) npProc.kill()
 })

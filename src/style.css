@@ -304,6 +304,12 @@ body.is-desktop .titlebar { padding-right: 152px; }
   color: #e3e3ea;
 }
 .util-btn:hover { background: rgba(255, 255, 255, 0.14); }
+.util-btn[hidden] { display: none; }
+.util-btn.update-ready {
+  color: #9bf7bd;
+  background: rgba(155, 247, 189, 0.16);
+  box-shadow: 0 0 10px rgba(155, 247, 189, 0.35);
+}
 
 /* ---------------- panels ---------------- */
 

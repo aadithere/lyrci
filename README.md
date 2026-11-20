@@ -45,7 +45,7 @@ npm run dist:win   # NSIS installer in release/
 
 ## Download
 
-Windows 10/11 x64: [download the installer](https://github.com/aadithere/lyrci/releases/download/v1.2.0/Verci-Setup-1.2.0.exe) (per-user install with Start-menu and desktop shortcuts) or the [portable app](https://github.com/aadithere/lyrci/releases/download/v1.2.0/Verci-1.2.0.exe). See the [latest release](https://github.com/aadithere/lyrci/releases/latest) for updates.
+Windows 10/11 x64: [download the installer](https://github.com/aadithere/lyrci/releases/download/v1.3.0/Verci-Setup-1.3.0.exe) (per-user install with Start-menu and desktop shortcuts) or the [portable app](https://github.com/aadithere/lyrci/releases/download/v1.3.0/Verci-1.3.0.exe). Installed builds check GitHub for updates on launch and offer to restart when one is ready. See the [latest release](https://github.com/aadithere/lyrci/releases/latest) for updates.
 
 ## Limitations
 
